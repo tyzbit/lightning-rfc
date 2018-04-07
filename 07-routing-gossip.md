@@ -249,6 +249,9 @@ The following `address descriptor` types are defined:
          onion service addresses; Encodes:
          `[32:32_byte_ed25519_pubkey] || [2:checksum] || [1:version]`, where
          `checksum = sha3(".onion checksum" | pubkey || version)[:2]`.
+   * `5`: Domain name; data = `[1:type][2:length][1-255:data]` (length 4-258)
+       * Domain name serving a `_lightning.tcp.example.com` `SRV` record for the
+         node.
 
 ### Requirements
 
@@ -276,6 +279,10 @@ The origin node:
   - MUST NOT include more than one `address descriptor` of the same type.
   - SHOULD set `flen` to the minimum length required to hold the `features`
   bits it sets.
+  - MAY perform DNS lookups on domain name addresses.
+  - MUST NOT connect to any node through a domain address if the node does not
+  exist on the corresponding [BOLT 12](12-node-dns-advertisement.md) root
+  `SRV` record.
 
 The final node:
   - if `node_id` is NOT a valid compressed public key:
